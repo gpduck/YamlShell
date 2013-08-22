@@ -28,17 +28,13 @@ function ConvertFrom-Yaml {
 		[String]$Yaml,
 		
 		[Parameter(Mandatory=$false)]
-		[System.Collections.HashTable]$InitialProperties
+		[System.Collections.HashTable]$InitialProperties = @{}
 	)
 	process {
 		$sr = New-object IO.StringReader($Yaml)
 		$YamlStream = new-object YamlDotNet.RepresentationModel.YamlStream
 		$YamlStream.Load($sr)
-		if($InitialProperties) {
-			$YamlStream.Documents | %{ ParseNode -YamlNode $_ -InitialProperties $InitialProperties }
-		} else {
-			$YamlStream.Documents | %{ ParseNode -YamlNode $_ }
-		}
+		$YamlStream.Documents | %{ ParseNode -YamlNode $_ -InitialProperties $InitialProperties } | Where-Object {$_}
 		$sr.Close()
 	}
 }
@@ -137,7 +133,7 @@ function ConvertTo-Yaml {
 		$JsonPipeline.End() | ForEach-Object {
 			$YamlSb.Append($_) > $null
 		}
-		"---`r`n{0}`r`n..." -f $YamlSb.ToString().Trim("{}`r`n")
+		"---`r`n{0}`r`n..." -f $YamlSb.ToString().Trim("`r`n")
 	}
 }
 Export-ModuleMember -Function ConvertTo-Yaml
