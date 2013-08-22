@@ -1,3 +1,27 @@
+<#
+.Description
+	Converts a Yaml document to PowerShell custom objects.
+	
+.Parameter Yaml
+	The Yaml document to convert.
+	
+.Parameter InitialProperties
+	A hash table of default values to set for the top-level object. The values in the Yaml document will override the default values provided by this parameter. For this to work the top-level needs to be a map.
+
+.Example
+$Yaml = @"
+---
+Prop1: "value1"
+Prop2: "value2"
+...
+"@
+	
+ConvertFrom-Yaml -Yaml $Yaml
+
+Prop2    Prop1
+-----    -----
+value2   value1
+#>
 function ConvertFrom-Yaml {
 	param(
 		[Parameter(Mandatory=$true,ValueFromPipeline=$true)]
@@ -78,6 +102,16 @@ function ParseNode {
 	}
 }
 
+<#
+.Description
+	Convert an object to a Yaml document.
+	
+.Parameter InputObject
+	The object to convert.
+
+.Parameter Depth
+	Specifies how many levels of contained objects are included in the Yaml representation. The default value is 2.
+#>
 function ConvertTo-Yaml {
 	param(
 		[Parameter(Mandatory=$true,ValueFromPipeline=$true)]
